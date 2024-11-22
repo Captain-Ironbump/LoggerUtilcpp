@@ -1,0 +1,10 @@
+*.o
+*.a
+
+# igore any aexecutables
+*.exe
+*.out
+*.bin
+*.so
+*.dll
+*.dylib
