@@ -1,6 +1,7 @@
 #include "logger.hpp"
 #include <iostream>
 #include <ctime>
+#include <ostream>
 
 // Constructor
 Logger::Logger(const std::string& filename) 
@@ -12,9 +13,9 @@ Logger::Logger(const std::string& filename)
     } else {
         logFile = new std::ofstream(filename, std::ios::app); 
         if (!logFile->is_open()) {
-            std::cerr << "Error opening log file: " << filename << std::endl;
+            std::cerr << "Error opening log file: " << filename << std::endl << std::flush;
         } else {
-            std::cout << "Log file opened successfully: " << filename << std::endl;
+            std::cout << "Log file opened successfully: " << filename << std::endl << std::flush;
         }
     }
 }
@@ -100,7 +101,7 @@ void Logger::log(LogLevel level, const std::string& message, int useLogFile)
             << std::endl;
 
     // Output to console
-    std::cout << logEntry.str();
+    std::cout << logEntry.str() << std::flush;
 
     if (logFile == nullptr)
         return;
