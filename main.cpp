@@ -2,7 +2,7 @@
 
 int main()
 {
-    Logger logger(""); // Create logger instance
+    Logger logger("log"); // Create logger instance
 
     // Example usage of the logger
     logger.log(INFO, "Program started.");

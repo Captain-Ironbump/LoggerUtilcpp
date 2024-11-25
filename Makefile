@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -g -Wall -std=c++11
+CXXFLAGS = -g -Wall -std=c++17
 TARGET = main
 STATIC_LIBRARY = libloggercpp.a
 MAIN_OBJ = main.o

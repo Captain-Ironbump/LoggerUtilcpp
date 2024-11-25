@@ -2,16 +2,21 @@
 #include <iostream>
 #include <ctime>
 #include <ostream>
+#include <regex>
+#include <filesystem>
 
 // Constructor
-Logger::Logger(const std::string& filename) 
+Logger::Logger(const std::string& baseFileName) 
 {
-    if (filename.empty()) {
+    // filename can be without providing the .count number
+    if (baseFileName.empty()) {
         // If filename is empty, don't open a log file.
         logFile = nullptr;
         std::cout << "No log file specified. Logging will be to console only." << std::endl;
     } else {
-        logFile = new std::ofstream(filename, std::ios::app); 
+        std::string filename = getNextLogFile(baseFileName);
+        // check if the opend file exeed the maxFileSize
+        logFile = new std::ofstream(filename, std::ios::app);
         if (!logFile->is_open()) {
             std::cerr << "Error opening log file: " << filename << std::endl << std::flush;
         } else {
@@ -110,4 +115,38 @@ void Logger::log(LogLevel level, const std::string& message, int useLogFile)
         *logFile << logEntry.str();
         logFile->flush(); // Ensure immediate write to file
     }
+}
+
+// Get the next log file and return name
+std::string Logger::getNextLogFile(const std::string& baseName) {
+    std::string pattern = baseName + R"(\.(\d+)\.txt)";
+    std::regex regexPattern(pattern);
+
+    int highestIndex = -1;
+    std::string latestFile;
+
+    // Iterate through current directory files
+    for (const auto& entry : std::filesystem::directory_iterator(std::filesystem::current_path())) {
+        std::string filename = entry.path().filename().string();
+        std::smatch match;
+
+        // Check if filename matches the pattern
+        if (std::regex_match(filename, match, regexPattern)) {
+            int currentIndex = std::stoi(match[1].str());
+
+            // Update the highest index
+            if (currentIndex > highestIndex) {
+                highestIndex = currentIndex;
+                latestFile = filename;
+            }
+        }
+    }
+
+    // Check if the latest file exceeds size limit
+    if (!latestFile.empty() && std::filesystem::file_size(latestFile) > this->maxFileSize) {
+        highestIndex++;
+    }
+
+    // Create the new log file name
+    return baseName + "." + std::to_string(highestIndex + 1) + ".txt";
 }
