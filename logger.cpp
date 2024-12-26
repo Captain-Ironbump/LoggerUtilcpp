@@ -4,6 +4,8 @@
 #include <ostream>
 #include <regex>
 #include <filesystem>
+#include <cstdio>
+#include <cstdarg>
 
 // Constructor
 Logger::Logger(const std::string& baseFileName) 
@@ -89,20 +91,27 @@ std::string Logger::getColorForLevel(LogLevel level)
 }
 
 // log functiom
-void Logger::log(LogLevel level, const std::string& message, int useLogFile)
+void Logger::log(LogLevel level, const char* message, ...)
 {
     // Get current timestamp
     time_t now = time(0);
     tm* timeinfo = localtime(&now);
     char timestamp[20];
-    strftime(timestamp, sizeof(timestamp),
-            "%Y-%m-%d %H:%M:%S", timeinfo);
+    strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", timeinfo);
 
+    char buffer[1024];
+    
+    // Pass a copy of the string (not a reference) to va_start
+    va_list args;
+    va_start(args, message);  // message here is passed as a non-reference
+
+    vsnprintf(buffer, sizeof(buffer), message, args);
+    va_end(args);
     // Create log entry
     std::ostringstream logEntry;
     logEntry << "[" << timestamp << "] "
             << getColorForLevel(level) << levelToString(level) << "\033[0m"  // Apply color
-            << ": " << message
+            << ": " << buffer
             << std::endl;
 
     // Output to console

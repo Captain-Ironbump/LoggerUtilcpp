@@ -11,5 +11,8 @@ int main()
     logger.log(ERROR, "An error occurred.");
     logger.log(CRITICAL, "Critical failure!");
 
+
+    logger.log(INFO, "Program started. %s", "Hello World");
+
     return 0;
 }
