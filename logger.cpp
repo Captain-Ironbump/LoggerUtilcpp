@@ -6,7 +6,9 @@
 #include <filesystem>
 #include <cstdio>
 #include <cstdarg>
-
+#ifdef __APPLE__
+    #include <sstream>
+#endif
 // Constructor
 Logger::Logger(const std::string& baseFileName) 
 {
