@@ -6,6 +6,13 @@ MAIN_OBJ = main.o
 LOGGER_OBJ = logger.o
 OBJ = $(MAIN_OBJ) $(LOGGER_OBJ) 
 
+ifeq ($(OS),Windows_NT)
+	TARGET = main.exe
+	CLEAN_CMD = del /f
+else
+	CLEAN_CMD = rm -f
+endif
+
 all: $(TARGET) $(STATIC_LIBRARY)
 
 $(TARGET): $(OBJ) 
@@ -21,7 +28,7 @@ $(LOGGER_OBJ): logger.cpp logger.hpp
 	$(CXX) $(CXXFLAGS) -c logger.cpp
 
 clean:
-	rm -f $(OBJ) $(TARGET) $(STATIC_LIBRARY)
+	$(CLEAN_CMD) $(OBJ) $(TARGET) $(STATIC_LIBRARY)
 
 clean-o:
-	rm -f $(OBJ)
+	$(CLEAN_CMD) $(OBJ)
